@@ -12,3 +12,10 @@ Dashboard can be accessed by the follow url
 
 After accessing the page go to connect -> sentinels-setup configuration
 
+
+# Get master name ip by name
+
+```
+docker exec redis-sentinel-docker-compose-redis-sentinel1-1 redis-cli -p 26379 SENTINEL get-master-addr-by-name redismaster
+
+```

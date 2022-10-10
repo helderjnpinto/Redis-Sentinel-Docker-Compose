@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
  
-  app:
-    image: some-image
-    links:
-      - redis-sentinel
+  # app:
+  #   image: some-image
+  #   links:
+  #     - redis-sentinel
 
   redis-ui:
     image: patrikx3/p3x-redis-ui:latest
@@ -22,28 +22,48 @@ services:
       - "./.data:/data"
     ports:
       - "6379:6379"
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.1 
  
   redis-slave:
     image: redis:7.0.5
-    command: redis-server --slaveof redis-master 6379
+    command: redis-server --slaveof 172.16.100.1 6379
     links:
       - redis-master
     volumes:
       - "./.data-slave:/data"
-     
+    ports:
+      - "6380:6379"
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.2 
+
   # Instance 1
-  redis-sentinel:
+  redis-sentinel1:
     build: 
       context: ./redis-sentinel
     links:
       - redis-master
- 
+    ports:
+      - "6381:6379"
+      - "26381:26379"
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.3
+
   # Instance 2
   redis-sentinel2:
     build: 
       context: ./redis-sentinel
     links:
       - redis-master
+    ports:
+      - "6382:6379"
+      - "26382:26379"
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.4
  
   # Instance 3
   redis-sentinel3:
@@ -51,3 +71,20 @@ services:
       context: ./redis-sentinel
     links:
       - redis-master
+    ports:
+      - "6383:6379"
+      - "26383:26379"
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.5 
+
+networks:
+  redis-network:
+    name: custom_redis_network
+    # use the bridge driver, but enable IPv6
+    driver: bridge
+    ipam:
+        driver: default
+        config:
+          - subnet: 172.16.100.0/24
+            gateway: 172.16.100.254
