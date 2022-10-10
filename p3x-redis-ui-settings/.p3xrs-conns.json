@@ -1,5 +1,5 @@
 {
-    "update": "2022-10-10T20:40:08.786Z",
+    "update": "2022-10-10T21:22:54.439Z",
     "list": [
         {
             "name": "sentinels-setup",
@@ -16,6 +16,17 @@
             "host": "172.16.100.3",
             "port": 26379,
             "id": "P3Xid05750a3c381010008f17ae4cc3d579",
+            "tlsWithoutCert": false,
+            "tlsRejectUnauthorized": true,
+            "cluster": false,
+            "nodes": []
+        },
+        {
+            "name": "slave",
+            "host": "172.16.100.2",
+            "port": 6379,
+            "password": "redissecret",
+            "id": "P3Xid66d77c3c38101000b67ba6a059fb41",
             "tlsWithoutCert": false,
             "tlsRejectUnauthorized": true,
             "cluster": false,

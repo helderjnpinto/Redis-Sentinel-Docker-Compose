@@ -25,29 +25,23 @@ services:
       - "./.data:/data"
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_REPLICATION_MODE=master
-      - REDIS_PASSWORD=redissecret
-    command: redis-server --appendonly yes
+    env_file:
+      - redis-master.env
+    command: /bin/sh -c "redis-server --appendonly yes --requirepass $$REDIS_PASSWORD"
     networks:
       redis-network:
           ipv4_address: 172.16.100.1 
  
   redis-slave:
     image: redis:7.0.5
-    command: redis-server --slaveof 172.16.100.1 6379
-    # command:
-    #     - redis-cli 
-    #     - config set masterauth ${REDIS_PASSWORD}
-    #     - slaveof 172.16.100.1 6379
-    #     - redis-server --slaveof 172.16.100.1 6379
+    command: /bin/sh -c "redis-server --appendonly yes --slaveof 172.16.100.1 6379 --masterauth $$REDIS_PASSWORD --requirepass $$REDIS_PASSWORD"
+    # command: redis-server --slaveof 172.16.100.1 6379
     links:
       - redis-master
     volumes:
       - "./.data-slave:/data"
-    environment:
-      - REDIS_MASTER_PASSWORD=redissecret
-      - REDIS_REPLICATION_MODE=slave
+    env_file:
+      - redis-master.env
     ports:
       - "6380:6379"
     depends_on:
