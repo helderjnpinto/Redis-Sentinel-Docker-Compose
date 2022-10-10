@@ -1,12 +1,25 @@
 {
-    "update": "2022-10-07T14:18:28.315Z",
+    "update": "2022-10-10T20:40:08.786Z",
     "list": [
         {
             "name": "sentinels-setup",
-            "host": "redis-master",
+            "host": "172.16.100.1",
             "port": 6379,
-            "password": "",
-            "id": "unique"
+            "id": "unique",
+            "cluster": false,
+            "nodes": [],
+            "tlsWithoutCert": false,
+            "password": "redissecret"
+        },
+        {
+            "name": "sentinel1",
+            "host": "172.16.100.3",
+            "port": 26379,
+            "id": "P3Xid05750a3c381010008f17ae4cc3d579",
+            "tlsWithoutCert": false,
+            "tlsRejectUnauthorized": true,
+            "cluster": false,
+            "nodes": []
         }
     ]
 }

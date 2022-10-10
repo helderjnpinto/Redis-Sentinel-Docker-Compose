@@ -15,13 +15,20 @@ services:
       - redis-master
     volumes:
       - ./p3x-redis-ui-settings:/settings
-
+    networks:
+      redis-network:
+          ipv4_address: 172.16.100.100
+ 
   redis-master:
     image: redis:7.0.5
     volumes:
       - "./.data:/data"
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=redissecret
+    command: redis-server --appendonly yes
     networks:
       redis-network:
           ipv4_address: 172.16.100.1 
@@ -29,12 +36,22 @@ services:
   redis-slave:
     image: redis:7.0.5
     command: redis-server --slaveof 172.16.100.1 6379
+    # command:
+    #     - redis-cli 
+    #     - config set masterauth ${REDIS_PASSWORD}
+    #     - slaveof 172.16.100.1 6379
+    #     - redis-server --slaveof 172.16.100.1 6379
     links:
       - redis-master
     volumes:
       - "./.data-slave:/data"
+    environment:
+      - REDIS_MASTER_PASSWORD=redissecret
+      - REDIS_REPLICATION_MODE=slave
     ports:
       - "6380:6379"
+    depends_on:
+      - redis-master
     networks:
       redis-network:
           ipv4_address: 172.16.100.2 
@@ -48,6 +65,10 @@ services:
     ports:
       - "6381:6379"
       - "26381:26379"
+    environment:
+      - REDIS_MASTER_PASSWORD=redissecret
+      - REDIS_SENTINEL_USERNAME=sentineluser
+      - REDIS_SENTINEL_PASSWORD=sentienlsecret
     networks:
       redis-network:
           ipv4_address: 172.16.100.3
@@ -61,6 +82,10 @@ services:
     ports:
       - "6382:6379"
       - "26382:26379"
+    environment:
+      - REDIS_MASTER_PASSWORD=redissecret
+      - REDIS_SENTINEL_USERNAME=sentineluser
+      - REDIS_SENTINEL_PASSWORD=sentienlsecret
     networks:
       redis-network:
           ipv4_address: 172.16.100.4
@@ -74,6 +99,10 @@ services:
     ports:
       - "6383:6379"
       - "26383:26379"
+    environment:
+      - REDIS_MASTER_PASSWORD=redissecret
+      - REDIS_SENTINEL_USERNAME=sentineluser
+      - REDIS_SENTINEL_PASSWORD=sentienlsecret
     networks:
       redis-network:
           ipv4_address: 172.16.100.5 
